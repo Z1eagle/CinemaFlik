@@ -13,11 +13,9 @@
       --text-secondary: #b3b3b3;
       --accent: #E50914;
       --accent-hover: #ff1a1a;
-      --gold: #f5c518;
       --card-bg: #1a1a1a;
       --border: #2a2a2a;
       --radius: 6px;
-      --font-logo: 'Georgia', 'Times New Roman', serif;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -35,7 +33,7 @@
     .navbar {
       position: fixed;
       top: 0; left: 0; width: 100%;
-      padding: 1.5rem 5%;
+      padding: 1.2rem 5%;
       z-index: 100;
       background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
       display: flex;
@@ -44,18 +42,14 @@
     }
     .navbar.scrolled { background: var(--bg-primary); }
     .logo {
-      font-family: var(--font-logo);
-      font-size: 2rem;   /* 25% bigger than original 1.6rem */
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gold), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 1px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    /* ===== HERO SECTION (Now Showing) ===== */
+    /* ===== HERO SECTION ===== */
     .hero {
       position: relative;
       height: 90vh;
@@ -104,18 +98,11 @@
       margin-bottom: 2rem;
       max-width: 500px;
     }
-    .tagline {
-      font-size: 1.2rem;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
     .hero-buttons {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      align-items: center;
     }
     .btn {
       padding: 0.8rem 2rem;
@@ -141,97 +128,136 @@
       color: white;
     }
     .btn-pay:hover { background: var(--accent-hover); transform: scale(1.03); }
+    .btn-share {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(5px);
+    }
+    .btn-share:hover {
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+    }
 
-    /* ===== FLOATING NOW SHOWING POSTER ===== */
-    .floating-now-showing {
+    /* ===== FIXED POSTER SIDEBAR (top right) ===== */
+    #poster-sidebar {
       position: fixed;
-      bottom: 30px;
+      top: 120px;
       right: 30px;
-      width: 160px;
-      height: 240px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .poster-card {
+      width: 280px;        /* doubled from 140px */
+      height: 420px;       /* doubled from 210px */
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0,0,0,0.8);
-      z-index: 90;
-      border: 2px solid var(--gold);
+      border: 2px solid var(--accent);
       background: #000;
-      transition: transform 0.3s;
+      position: relative;
       cursor: pointer;
+      transition: transform 0.3s;
     }
-    .floating-now-showing:hover { transform: scale(1.05); }
-    .floating-now-showing img {
+    .poster-card:hover { transform: scale(1.03); }
+    .poster-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       opacity: 0.9;
     }
-    .floating-label {
+    .poster-label {
       position: absolute;
       bottom: 0;
       left: 0; right: 0;
       background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      color: var(--gold);
+      color: white;
       text-align: center;
-      padding: 0.5rem;
+      padding: 0.6rem;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 1rem;
       text-transform: uppercase;
       letter-spacing: 1px;
+      background-color: rgba(229,9,20,0.7); /* semi-transparent red */
+    }
+    .poster-label.coming-soon {
+      background-color: rgba(0,0,0,0.8);
     }
 
-    /* ===== MOVIE CARDS ROW (Coming Soon) ===== */
-    .section-title {
+    /* ===== WHATSAPP BUBBLE (bottom left) ===== */
+    .whatsapp-bubble {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #25D366;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 90;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: none;
+    }
+    .whatsapp-bubble:hover { transform: scale(1.1); }
+    .whatsapp-bubble svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+
+    /* ===== CONTENT ROWS (Behind the Scenes) ===== */
+    .content-row {
+      margin: 3rem 5% 3rem 5%;
+      clear: both;
+    }
+    .row-title {
       font-size: 1.6rem;
       font-weight: 700;
-      margin: 2rem 5% 1.2rem;
+      margin-bottom: 1.2rem;
     }
-    .movie-row {
+    .card-grid {
       display: flex;
-      gap: 2rem;
-      margin: 0 5% 3rem;
-      flex-wrap: wrap;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
     }
-    .movie-card {
-      background: var(--card-bg);
+    .card-grid::-webkit-scrollbar { height: 6px; }
+    .card-grid::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    .card {
+      flex: 0 0 200px;
       border-radius: var(--radius);
       overflow: hidden;
-      flex: 1 1 280px;
-      max-width: 350px;
-      transition: transform 0.3s;
+      background: var(--card-bg);
+      transition: transform 0.3s ease;
       cursor: pointer;
+      scroll-snap-align: start;
       position: relative;
     }
-    .movie-card:hover { transform: translateY(-5px); }
-    .movie-card-poster {
-      height: 400px;
-      object-fit: cover;
+    .card img {
       width: 100%;
+      height: 280px;
+      object-fit: cover;
     }
-    .movie-card-info {
-      padding: 1rem;
-    }
-    .movie-card-info h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.3rem;
-    }
-    .movie-card-info p {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-    .coming-soon-badge {
+    .card:hover { transform: scale(1.08); z-index: 10; }
+    .card-overlay {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: var(--accent);
-      color: white;
-      padding: 0.3rem 1rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
+      bottom: 0;
+      left: 0; right: 0;
+      padding: 0.5rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.9));
+      font-size: 0.9rem;
+      text-align: center;
     }
 
-    /* ===== MODALS (same as before) ===== */
+    /* ===== MODALS (same) ===== */
     .modal {
       display: none;
       position: fixed;
@@ -265,7 +291,6 @@
     .close:hover { color: white; }
     .modal h2 { margin-bottom: 1.5rem; font-size: 1.6rem; }
 
-    /* Provider grid */
     .provider-grid {
       display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
     }
@@ -302,7 +327,6 @@
     }
     .tiny-note { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
 
-    /* Private video section */
     .private-video-section {
       margin: 3rem 5%; display: none;
     }
@@ -310,7 +334,6 @@
       width: 100%; height: 60vh; border: none; border-radius: 8px;
     }
 
-    /* Footer */
     .footer {
       padding: 2rem 5%;
       color: var(--text-secondary);
@@ -324,40 +347,22 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-    .footer a { color: var(--gold); text-decoration: underline; }
+    .footer a { color: var(--accent); text-decoration: underline; }
 
-    /* ===== WHATSAPP SHARE BUBBLE ===== */
-    .whatsapp-bubble {
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      background: #25D366;
-      color: white;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      z-index: 90;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .whatsapp-bubble:hover { transform: scale(1.1); }
-    @media (max-width: 600px) {
-      .floating-now-showing { width: 120px; height: 180px; bottom: 20px; right: 20px; }
+    /* Hide sidebar on small screens */
+    @media (max-width: 768px) {
+      #poster-sidebar { display: none; }
+      .hero-content { margin-left: 3%; }
     }
   </style>
 </head>
 <body>
-  <!-- CLEAN NAV -->
+  <!-- NAV -->
   <nav class="navbar" id="navbar">
-    <div class="logo">CinemAfric</div>
+    <div class="logo">🎬 CinemAfric</div>
   </nav>
 
-  <!-- HERO – NOW SHOWING (active movie) -->
+  <!-- HERO – NOW SHOWING -->
   <section class="hero">
     <video class="hero-bg" autoplay muted loop playsinline>
       <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4" />
@@ -367,47 +372,63 @@
       <h1 class="movie-title">The Future Won't Wait</h1>
       <div class="movie-meta"><span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span></div>
       <p class="movie-synopsis">A powerful story of resilience, hope, and the unbreakable spirit of a generation.</p>
-      <div class="tagline">🍿 Grab your popcorn and enjoy cinema on all devices</div>
       <div class="hero-buttons">
         <button class="btn btn-play" onclick="openTrailer()">▶ Watch Trailer</button>
+        <button class="btn btn-share" onclick="sharePage()">📤 Share</button>
         <button class="btn btn-pay" onclick="openPaymentModal()">🔒 Unlock Full Movie • K20</button>
       </div>
     </div>
   </section>
 
-  <!-- FLOATING "NOW SHOWING" POSTER -->
-  <div class="floating-now-showing" onclick="scrollToHero()">
-    <img src="https://picsum.photos/300/450?random=50" alt="Now Showing Poster" />
-    <div class="floating-label">Now Showing</div>
-  </div>
-
-  <!-- WHATSAPP SHARE BUTTON -->
-  <div class="whatsapp-bubble" onclick="shareOnWhatsApp()" title="Share on WhatsApp">💬</div>
-
-  <!-- COMING SOON MOVIES -->
-  <h2 class="section-title">Coming Soon</h2>
-  <div class="movie-row">
-    <div class="movie-card">
-      <span class="coming-soon-badge">Coming Soon</span>
-      <img class="movie-card-poster" src="https://picsum.photos/400/600?random=60" alt="Movie 2" />
-      <div class="movie-card-info">
-        <h3>Echoes of the Savanna</h3>
-        <p>Thriller • 2026</p>
-      </div>
+  <!-- FIXED POSTER SIDEBAR: Now Showing + Coming Soon -->
+  <div id="poster-sidebar">
+    <!-- Now Showing Poster -->
+    <div class="poster-card" onclick="document.querySelector('.hero').scrollIntoView({behavior:'smooth'})">
+      <img src="https://picsum.photos/560/840?random=50" alt="Now Showing" />
+      <div class="poster-label">Now Showing</div>
     </div>
-    <div class="movie-card">
-      <span class="coming-soon-badge">Coming Soon</span>
-      <img class="movie-card-poster" src="https://picsum.photos/400/600?random=61" alt="Movie 3" />
-      <div class="movie-card-info">
-        <h3>Copper Sunrise</h3>
-        <p>Romance • 2026</p>
-      </div>
+    <!-- Coming Soon 1 -->
+    <div class="poster-card">
+      <img src="https://picsum.photos/560/840?random=60" alt="Coming Soon" />
+      <div class="poster-label coming-soon">Coming Soon</div>
+    </div>
+    <!-- Coming Soon 2 -->
+    <div class="poster-card">
+      <img src="https://picsum.photos/560/840?random=61" alt="Coming Soon" />
+      <div class="poster-label coming-soon">Coming Soon</div>
     </div>
   </div>
+
+  <!-- WHATSAPP SHARE BUTTON (bottom left) -->
+  <div class="whatsapp-bubble" onclick="shareOnWhatsApp()" title="Share on WhatsApp">
+    <!-- Professional WhatsApp SVG icon -->
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </div>
+
+  <!-- BEHIND THE SCENES SECTION -->
+  <section class="content-row">
+    <h2 class="row-title">Behind the Scenes</h2>
+    <div class="card-grid">
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=10" alt="BTS 1" />
+        <div class="card-overlay">🎬 The Making Of</div>
+      </div>
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=11" alt="BTS 2" />
+        <div class="card-overlay">👥 Cast Interviews</div>
+      </div>
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=12" alt="BTS 3" />
+        <div class="card-overlay">📸 On Set</div>
+      </div>
+    </div>
+  </section>
 
   <!-- PRIVATE VIDEO REVEAL (hidden until payment) -->
   <div class="private-video-section" id="privateVideoSection">
-    <h2 class="section-title">🎥 Now Showing – Full Movie</h2>
+    <h2 class="row-title">🎥 Now Showing – Full Movie</h2>
     <div id="videoContainer"></div>
   </div>
 
@@ -423,7 +444,7 @@
     </div>
   </div>
 
-  <!-- PAYMENT MODAL (same as before) -->
+  <!-- PAYMENT MODAL (unchanged) -->
   <div class="modal" id="paymentModal">
     <div class="modal-content">
       <span class="close" onclick="closePaymentModal()">&times;</span>
@@ -478,18 +499,33 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    function scrollToHero() {
-      document.querySelector('.hero').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function shareOnWhatsApp() {
-      const text = encodeURIComponent('🎬 Watch "The Future Won\'t Wait" now on CinemAfric! ' + window.location.href);
-      window.open(`https://wa.me/?text=${text}`, '_blank');
-    }
-
+    // Trailer modal
     function openTrailer() { document.getElementById('trailerModal').classList.add('open'); }
     function closeTrailer() { document.getElementById('trailerModal').classList.remove('open'); }
 
+    // Share functionality
+    function sharePage() {
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert('Link copied! Paste it into WhatsApp or Facebook to share.');
+        }).catch(() => {
+          prompt('Copy this link to share:', window.location.href);
+        });
+      }
+    }
+
+    // WhatsApp direct share
+    function shareOnWhatsApp() {
+      const text = encodeURIComponent('🎬 Watch "The Future Won\'t Wait" on CinemAfric! ' + window.location.href);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    // Payment modal
     function openPaymentModal() {
       document.getElementById('paymentModal').classList.add('open');
       resetPaymentModal();
@@ -549,6 +585,7 @@
       section.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // Close modals on outside click
     window.addEventListener('click', (e) => {
       if (e.target === document.getElementById('trailerModal')) closeTrailer();
       if (e.target === document.getElementById('paymentModal')) closePaymentModal();
