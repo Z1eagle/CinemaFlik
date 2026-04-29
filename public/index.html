@@ -42,7 +42,7 @@
     }
     .navbar.scrolled { background: var(--bg-primary); }
     .logo {
-      font-size: 1.6rem;
+      font-size: 1.84rem;               /* increased 15% from 1.6rem */
       font-weight: 800;
       color: var(--accent);
       text-transform: uppercase;
@@ -144,12 +144,11 @@
 
     /* ===== MAIN CONTENT WRAPPER ===== */
     .main-content {
-      margin-left: 7.5%;          /* increased by 50% from 5% */
+      margin-left: 7.5%;
     }
-    /* On large screens, leave space for sidebar */
     @media (min-width: 769px) {
       .main-content {
-        margin-right: calc(7.5% + 320px); /* 320px = sidebar width + right offset */
+        margin-right: calc(7.5% + 320px);
         max-width: none;
       }
     }
@@ -169,14 +168,15 @@
       z-index: 80;
       display: flex;
       flex-direction: column;
-      justify-content: center;   /* centres vertically */
+      justify-content: flex-start;   /* start from top, no cut‑off */
       gap: 20px;
-      pointer-events: none;       /* allows clicking through empty areas */
+      padding-top: 20px;             /* a little breathing room */
+      pointer-events: none;
       max-height: 100vh;
-      overflow-y: auto;          /* scroll if too tall */
+      overflow-y: auto;
     }
     .poster-card {
-      width: 280px;               /* doubled size */
+      width: 280px;
       height: 420px;
       border-radius: 10px;
       overflow: hidden;
@@ -186,7 +186,7 @@
       position: relative;
       cursor: pointer;
       transition: transform 0.3s;
-      pointer-events: auto;       /* re-enable clicks on card */
+      pointer-events: auto;
       flex-shrink: 0;
     }
     .poster-card:hover { transform: scale(1.03); }
@@ -214,7 +214,6 @@
       background-color: rgba(0,0,0,0.8);
     }
 
-    /* Hide sidebar on small screens */
     @media (max-width: 768px) {
       #poster-sidebar { display: none; }
     }
@@ -245,7 +244,7 @@
       fill: white;
     }
 
-    /* ===== BEHIND THE SCENES SECTION ===== */
+    /* ===== CONTENT ROWS (Stills & BTS) ===== */
     .content-row {
       margin: 3rem 0;
     }
@@ -380,8 +379,7 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-    .footer a { color: var(--accent); text-decoration: underline; }
-
+    .footer a { color: white; text-decoration: underline; }   /* email now white */
     @media (max-width: 768px) {
       .footer { flex-direction: column; }
     }
@@ -415,7 +413,7 @@
     </div>
   </section>
 
-  <!-- FIXED POSTER SIDEBAR: Now Showing + Coming Soon -->
+  <!-- FIXED POSTER SIDEBAR -->
   <div id="poster-sidebar">
     <div class="poster-card" onclick="document.querySelector('.hero').scrollIntoView({behavior:'smooth'})">
       <img src="https://picsum.photos/560/840?random=50" alt="Now Showing" />
@@ -438,8 +436,23 @@
     </svg>
   </div>
 
-  <!-- BEHIND THE SCENES (inside main-content) -->
+  <!-- MAIN CONTENT (Stills, BTS, Footer) -->
   <div class="main-content">
+
+    <!-- MOVIE STILLS (6 cards) -->
+    <section class="content-row">
+      <h2 class="row-title">Movie Stills</h2>
+      <div class="card-grid">
+        <div class="card"><img src="https://picsum.photos/400/280?random=1" alt="Still 1" /></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=2" alt="Still 2" /></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=3" alt="Still 3" /></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=4" alt="Still 4" /></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=5" alt="Still 5" /></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=6" alt="Still 6" /></div>
+      </div>
+    </section>
+
+    <!-- BEHIND THE SCENES -->
     <section class="content-row">
       <h2 class="row-title">Behind the Scenes</h2>
       <div class="card-grid">
@@ -470,7 +483,7 @@
       </div>
     </section>
 
-    <!-- PRIVATE VIDEO REVEAL (hidden until payment) -->
+    <!-- PRIVATE VIDEO REVEAL (unchanged) -->
     <div class="private-video-section" id="privateVideoSection">
       <h2 class="row-title">🎥 Now Showing – Full Movie</h2>
       <div id="videoContainer"></div>
@@ -544,11 +557,9 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Trailer modal
     function openTrailer() { document.getElementById('trailerModal').classList.add('open'); }
     function closeTrailer() { document.getElementById('trailerModal').classList.remove('open'); }
 
-    // Share functionality
     function sharePage() {
       if (navigator.share) {
         navigator.share({ title: document.title, url: window.location.href }).catch(() => {});
@@ -561,13 +572,11 @@
       }
     }
 
-    // WhatsApp direct share
     function shareOnWhatsApp() {
       const text = encodeURIComponent('🎬 Watch "The Future Won\'t Wait" on CinemAfric! ' + window.location.href);
       window.open(`https://wa.me/?text=${text}`, '_blank');
     }
 
-    // Payment modal
     function openPaymentModal() {
       document.getElementById('paymentModal').classList.add('open');
       resetPaymentModal();
