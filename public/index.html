@@ -3,81 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital Cinema – Unlock the Movie</title>
+  <title>CinemAfric – Watch Now</title>
   <style>
     /* ===== GLOBAL RESET & VARIABLES ===== */
     :root {
-      --bg-primary: #141414;
-      --bg-secondary: #181818;
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #151515;
       --text-primary: #ffffff;
       --text-secondary: #b3b3b3;
       --accent: #E50914;
-      --accent-hover: #f6121d;
-      --overlay-dark: rgba(0, 0, 0, 0.75);
-      --card-bg: #222;
-      --border: #333;
-      --radius: 4px;
+      --accent-hover: #ff1a1a;
+      --gold: #f5c518;
+      --card-bg: #1a1a1a;
+      --border: #2a2a2a;
+      --radius: 6px;
+      --font-logo: 'Georgia', 'Times New Roman', serif;
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: var(--bg-primary);
       font-family: 'Helvetica Neue', Arial, sans-serif;
       color: var(--text-primary);
       line-height: 1.4;
+      overflow-x: hidden;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    .hidden {
-      display: none !important;
-    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    .hidden { display: none !important; }
 
-    /* ===== TOP NAV BAR ===== */
+    /* ===== TOP NAV BAR (clean) ===== */
     .navbar {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 1.2rem 5%;
+      top: 0; left: 0; width: 100%;
+      padding: 1.5rem 5%;
       z-index: 100;
-      background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
       display: flex;
       align-items: center;
-      gap: 2rem;
       transition: background 0.3s;
     }
-    .navbar.scrolled {
-      background: var(--bg-primary);
-    }
+    .navbar.scrolled { background: var(--bg-primary); }
     .logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--accent);
-      text-transform: uppercase;
+      font-family: var(--font-logo);
+      font-size: 2rem;   /* 25% bigger than original 1.6rem */
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: 1px;
-    }
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-    .nav-links li:hover {
-      color: var(--text-primary);
-      cursor: pointer;
+      text-transform: uppercase;
     }
 
-    /* ===== HERO SECTION ===== */
+    /* ===== HERO SECTION (Now Showing) ===== */
     .hero {
       position: relative;
       height: 90vh;
@@ -90,14 +68,14 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       object-fit: cover;
-      filter: brightness(0.45);
+      filter: brightness(0.4);
       pointer-events: none;
     }
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, #141414 0%, transparent 60%),
-                  linear-gradient(0deg, #141414 0%, transparent 50%);
+      background: linear-gradient(90deg, #0a0a0a 0%, transparent 60%),
+                  linear-gradient(0deg, #0a0a0a 0%, transparent 50%);
     }
     .hero-content {
       position: relative;
@@ -106,12 +84,12 @@
       z-index: 2;
     }
     .movie-title {
-      font-size: clamp(2rem, 5vw, 4rem);
+      font-size: clamp(2.2rem, 5vw, 4rem);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 2px;
       line-height: 1.1;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
     .movie-meta {
       font-size: 1.1rem;
@@ -125,6 +103,14 @@
       color: rgba(255,255,255,0.8);
       margin-bottom: 2rem;
       max-width: 500px;
+    }
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .hero-buttons {
       display: flex;
@@ -145,80 +131,107 @@
       letter-spacing: 0.5px;
     }
     .btn-play {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.15);
       color: white;
       backdrop-filter: blur(5px);
     }
-    .btn-play:hover {
-      background: rgba(255,255,255,0.35);
-    }
+    .btn-play:hover { background: rgba(255,255,255,0.3); }
     .btn-pay {
       background: var(--accent);
       color: white;
     }
-    .btn-pay:hover {
-      background: var(--accent-hover);
-      transform: scale(1.03);
-    }
+    .btn-pay:hover { background: var(--accent-hover); transform: scale(1.03); }
 
-    /* ===== CONTENT ROWS ===== */
-    .content-row {
-      margin: 3rem 5%;
-    }
-    .row-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 1.2rem;
-    }
-    .card-grid {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      padding-bottom: 1rem;
-      scroll-snap-type: x mandatory;
-    }
-    .card-grid::-webkit-scrollbar {
-      height: 6px;
-    }
-    .card-grid::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: 3px;
-    }
-    .card {
-      flex: 0 0 200px;
-      border-radius: var(--radius);
+    /* ===== FLOATING NOW SHOWING POSTER ===== */
+    .floating-now-showing {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 160px;
+      height: 240px;
+      border-radius: 10px;
       overflow: hidden;
-      background: var(--card-bg);
-      transition: transform 0.3s ease, box-shadow 0.3s;
-      cursor: pointer;
-      scroll-snap-align: start;
-      position: relative;
-    }
-    .card img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+      z-index: 90;
+      border: 2px solid var(--gold);
+      background: #000;
       transition: transform 0.3s;
+      cursor: pointer;
     }
-    .card:hover {
-      transform: scale(1.08);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-      z-index: 10;
+    .floating-now-showing:hover { transform: scale(1.05); }
+    .floating-now-showing img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
     }
-    .card-overlay {
+    .floating-label {
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 0.5rem;
+      left: 0; right: 0;
       background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      font-size: 0.9rem;
-    }
-    .bts-card .card-overlay {
+      color: var(--gold);
       text-align: center;
+      padding: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    /* ===== MODALS ===== */
+    /* ===== MOVIE CARDS ROW (Coming Soon) ===== */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 2rem 5% 1.2rem;
+    }
+    .movie-row {
+      display: flex;
+      gap: 2rem;
+      margin: 0 5% 3rem;
+      flex-wrap: wrap;
+    }
+    .movie-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      flex: 1 1 280px;
+      max-width: 350px;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+    .movie-card:hover { transform: translateY(-5px); }
+    .movie-card-poster {
+      height: 400px;
+      object-fit: cover;
+      width: 100%;
+    }
+    .movie-card-info {
+      padding: 1rem;
+    }
+    .movie-card-info h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+    }
+    .movie-card-info p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .coming-soon-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--accent);
+      color: white;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* ===== MODALS (same as before) ===== */
     .modal {
       display: none;
       position: fixed;
@@ -229,9 +242,7 @@
       align-items: center;
       justify-content: center;
     }
-    .modal.open {
-      display: flex;
-    }
+    .modal.open { display: flex; }
     .modal-content {
       background: var(--bg-secondary);
       border-radius: 8px;
@@ -251,133 +262,102 @@
       color: var(--text-secondary);
       transition: color 0.2s;
     }
-    .close:hover {
-      color: white;
-    }
-    .modal h2 {
-      margin-bottom: 1.5rem;
-      font-size: 1.6rem;
-    }
+    .close:hover { color: white; }
+    .modal h2 { margin-bottom: 1.5rem; font-size: 1.6rem; }
 
     /* Provider grid */
     .provider-grid {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
+      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
     }
     .provider-card {
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 1.5rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s, border 0.2s;
-      border: 2px solid transparent;
-      min-width: 120px;
+      background: var(--card-bg); border-radius: 8px; padding: 1.5rem 2rem;
+      text-align: center; cursor: pointer; transition: transform 0.2s, border 0.2s;
+      border: 2px solid transparent; min-width: 120px;
     }
-    .provider-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--accent);
-    }
+    .provider-card:hover { transform: translateY(-5px); border-color: var(--accent); }
     .provider-logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin: 0 auto 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.5rem;
-      color: white;
+      width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1.5rem; color: white;
     }
     .mtn-logo { background: #FFCC00; color: #000; }
     .airtel-logo { background: #E40000; }
     .zamtel-logo { background: #009639; }
 
-    /* Instruction step */
     .instruction-box {
-      background: #2a2a2a;
-      padding: 1.5rem;
-      border-radius: 6px;
-      margin: 1.5rem 0;
-      text-align: center;
+      background: #2a2a2a; padding: 1.5rem; border-radius: 6px; margin: 1.5rem 0; text-align: center;
     }
     .instruction-box .number {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--accent);
-      margin: 0.5rem 0;
+      font-size: 2rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); margin: 0.5rem 0;
     }
-    .btn-confirm {
-      background: var(--accent);
-      color: white;
-      width: 100%;
-      margin-top: 1rem;
-    }
+    .btn-confirm { background: var(--accent); color: white; width: 100%; margin-top: 1rem; }
     .back-link {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      display: inline-block;
+      color: var(--text-secondary); font-size: 0.9rem; cursor: pointer; margin-top: 1rem; display: inline-block;
     }
     .back-link:hover { color: white; }
 
-    /* Verification step */
     .verification-box input {
-      width: 100%;
-      padding: 1rem;
-      background: #2a2a2a;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: white;
-      font-size: 1rem;
-      margin: 1rem 0;
+      width: 100%; padding: 1rem; background: #2a2a2a; border: 1px solid var(--border);
+      border-radius: var(--radius); color: white; font-size: 1rem; margin: 1rem 0;
     }
-    .tiny-note {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-top: 0.5rem;
-    }
+    .tiny-note { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
 
     /* Private video section */
     .private-video-section {
-      margin: 3rem 5%;
-      display: none;
+      margin: 3rem 5%; display: none;
     }
     .private-video-section iframe {
-      width: 100%;
-      height: 60vh;
-      border: none;
-      border-radius: 8px;
+      width: 100%; height: 60vh; border: none; border-radius: 8px;
     }
 
     /* Footer */
     .footer {
       padding: 2rem 5%;
       color: var(--text-secondary);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       border-top: 1px solid var(--border);
       margin-top: 4rem;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer a { color: var(--gold); text-decoration: underline; }
+
+    /* ===== WHATSAPP SHARE BUBBLE ===== */
+    .whatsapp-bubble {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: #25D366;
+      color: white;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 90;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .whatsapp-bubble:hover { transform: scale(1.1); }
+    @media (max-width: 600px) {
+      .floating-now-showing { width: 120px; height: 180px; bottom: 20px; right: 20px; }
     }
   </style>
 </head>
 <body>
-  <!-- NAV -->
+  <!-- CLEAN NAV -->
   <nav class="navbar" id="navbar">
-    <div class="logo">🎬 CINEMA</div>
-    <ul class="nav-links">
-      <li>Home</li>
-      <li>Movies</li>
-      <li>Behind the Scenes</li>
-      <li>Contact</li>
-    </ul>
+    <div class="logo">CinemAfric</div>
   </nav>
 
-  <!-- HERO -->
+  <!-- HERO – NOW SHOWING (active movie) -->
   <section class="hero">
     <video class="hero-bg" autoplay muted loop playsinline>
       <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4" />
@@ -385,13 +365,9 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1 class="movie-title">The Future Won't Wait</h1>
-      <div class="movie-meta">
-        <span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span>
-      </div>
-      <p class="movie-synopsis">
-        A powerful story of resilience, hope, and the unbreakable spirit of a generation. 
-        Access the full film exclusively after payment.
-      </p>
+      <div class="movie-meta"><span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span></div>
+      <p class="movie-synopsis">A powerful story of resilience, hope, and the unbreakable spirit of a generation.</p>
+      <div class="tagline">🍿 Grab your popcorn and enjoy cinema on all devices</div>
       <div class="hero-buttons">
         <button class="btn btn-play" onclick="openTrailer()">▶ Watch Trailer</button>
         <button class="btn btn-pay" onclick="openPaymentModal()">🔒 Unlock Full Movie • K20</button>
@@ -399,40 +375,39 @@
     </div>
   </section>
 
-  <!-- MOVIE STILLS -->
-  <section class="content-row">
-    <h2 class="row-title">Movie Stills</h2>
-    <div class="card-grid">
-      <div class="card"><img src="https://picsum.photos/400/280?random=1" alt="Still 1" /></div>
-      <div class="card"><img src="https://picsum.photos/400/280?random=2" alt="Still 2" /></div>
-      <div class="card"><img src="https://picsum.photos/400/280?random=3" alt="Still 3" /></div>
-      <div class="card"><img src="https://picsum.photos/400/280?random=4" alt="Still 4" /></div>
-      <div class="card"><img src="https://picsum.photos/400/280?random=5" alt="Still 5" /></div>
-    </div>
-  </section>
+  <!-- FLOATING "NOW SHOWING" POSTER -->
+  <div class="floating-now-showing" onclick="scrollToHero()">
+    <img src="https://picsum.photos/300/450?random=50" alt="Now Showing Poster" />
+    <div class="floating-label">Now Showing</div>
+  </div>
 
-  <!-- BEHIND THE SCENES -->
-  <section class="content-row">
-    <h2 class="row-title">Behind the Scenes</h2>
-    <div class="card-grid">
-      <div class="card bts-card">
-        <img src="https://picsum.photos/400/280?random=10" alt="BTS 1" />
-        <div class="card-overlay">🎬 The Making Of</div>
-      </div>
-      <div class="card bts-card">
-        <img src="https://picsum.photos/400/280?random=11" alt="BTS 2" />
-        <div class="card-overlay">👥 Cast Interviews</div>
-      </div>
-      <div class="card bts-card">
-        <img src="https://picsum.photos/400/280?random=12" alt="BTS 3" />
-        <div class="card-overlay">📸 On Set</div>
+  <!-- WHATSAPP SHARE BUTTON -->
+  <div class="whatsapp-bubble" onclick="shareOnWhatsApp()" title="Share on WhatsApp">💬</div>
+
+  <!-- COMING SOON MOVIES -->
+  <h2 class="section-title">Coming Soon</h2>
+  <div class="movie-row">
+    <div class="movie-card">
+      <span class="coming-soon-badge">Coming Soon</span>
+      <img class="movie-card-poster" src="https://picsum.photos/400/600?random=60" alt="Movie 2" />
+      <div class="movie-card-info">
+        <h3>Echoes of the Savanna</h3>
+        <p>Thriller • 2026</p>
       </div>
     </div>
-  </section>
+    <div class="movie-card">
+      <span class="coming-soon-badge">Coming Soon</span>
+      <img class="movie-card-poster" src="https://picsum.photos/400/600?random=61" alt="Movie 3" />
+      <div class="movie-card-info">
+        <h3>Copper Sunrise</h3>
+        <p>Romance • 2026</p>
+      </div>
+    </div>
+  </div>
 
   <!-- PRIVATE VIDEO REVEAL (hidden until payment) -->
   <div class="private-video-section" id="privateVideoSection">
-    <h2 class="row-title">🎥 Now Showing – Full Movie</h2>
+    <h2 class="section-title">🎥 Now Showing – Full Movie</h2>
     <div id="videoContainer"></div>
   </div>
 
@@ -441,38 +416,25 @@
     <div class="modal-content" style="max-width:800px; padding:0.5rem; background:#000;">
       <span class="close" onclick="closeTrailer()" style="top:0.2rem; right:1rem;">&times;</span>
       <div style="position:relative; padding-top:56.25%;">
-        <iframe id="trailerIframe" style="position:absolute; top:0; left:0; width:100%; height:100%;" 
-                src="https://www.youtube.com/embed/wHaidC9NJ3g" 
+        <iframe id="trailerIframe" style="position:absolute; top:0; left:0; width:100%; height:100%;"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                 title="Trailer" frameborder="0" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
-  <!-- PAYMENT MODAL -->
+  <!-- PAYMENT MODAL (same as before) -->
   <div class="modal" id="paymentModal">
     <div class="modal-content">
       <span class="close" onclick="closePaymentModal()">&times;</span>
-      
-      <!-- Step 1: Provider Selection -->
       <div id="providerSelection">
         <h2>Select Your Mobile Money Provider</h2>
         <div class="provider-grid">
-          <div class="provider-card" onclick="showInstructions('mtn')">
-            <div class="provider-logo mtn-logo">MTN</div>
-            <span>MTN MoMo</span>
-          </div>
-          <div class="provider-card" onclick="showInstructions('airtel')">
-            <div class="provider-logo airtel-logo">Airtel</div>
-            <span>Airtel Money</span>
-          </div>
-          <div class="provider-card" onclick="showInstructions('zamtel')">
-            <div class="provider-logo zamtel-logo">Zamtel</div>
-            <span>Zamtel Kwacha</span>
-          </div>
+          <div class="provider-card" onclick="showInstructions('mtn')"><div class="provider-logo mtn-logo">MTN</div><span>MTN MoMo</span></div>
+          <div class="provider-card" onclick="showInstructions('airtel')"><div class="provider-logo airtel-logo">Airtel</div><span>Airtel Money</span></div>
+          <div class="provider-card" onclick="showInstructions('zamtel')"><div class="provider-logo zamtel-logo">Zamtel</div><span>Zamtel Kwacha</span></div>
         </div>
       </div>
-
-      <!-- Step 2: Payment Instructions -->
       <div id="instructionStep" class="hidden">
         <h2>Complete Your Payment</h2>
         <div class="instruction-box">
@@ -484,8 +446,6 @@
         <button class="btn btn-confirm" onclick="showVerification()">I've Sent the Payment →</button>
         <div class="back-link" onclick="goBackToProviders()">← Choose another network</div>
       </div>
-
-      <!-- Step 3: Verification -->
       <div id="verificationStep" class="hidden">
         <h2>Almost There!</h2>
         <p>Enter the <strong>transaction ID</strong> from your mobile money SMS.</p>
@@ -499,46 +459,42 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
   <footer class="footer">
-    <p>© 2026 Digital Cinema. All rights reserved. | <a href="#" style="color:var(--text-secondary)">Privacy Policy</a></p>
+    <p>© 2026 CinemAfric. All rights reserved.</p>
+    <p>📧 <a href="mailto:Cinemafric@gmail.com">Cinemafric@gmail.com</a></p>
   </footer>
 
   <script>
-    // ========================
-    //   GLOBAL STATE
-    // ========================
+    // Global state
     let selectedNetwork = null;
-
-    // 🔴 REPLACE THESE WITH YOUR REAL MERCHANT NUMBERS
     const merchantNumbers = {
-      mtn: '0966924475',    // your MTN number customers send K50 to
-      airtel: '0777853019', // your Airtel number
-      zamtel: '0955924475'  // your Zamtel number
+      mtn: '0971234567',
+      airtel: '0977654321',
+      zamtel: '0955555555'
     };
 
-    // Navbar scroll effect
     window.addEventListener('scroll', () => {
-      const nav = document.getElementById('navbar');
-      if (window.scrollY > 50) nav.classList.add('scrolled');
-      else nav.classList.remove('scrolled');
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Trailer modal
-    function openTrailer() {
-      document.getElementById('trailerModal').classList.add('open');
-    }
-    function closeTrailer() {
-      document.getElementById('trailerModal').classList.remove('open');
+    function scrollToHero() {
+      document.querySelector('.hero').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Payment modal
+    function shareOnWhatsApp() {
+      const text = encodeURIComponent('🎬 Watch "The Future Won\'t Wait" now on CinemAfric! ' + window.location.href);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    function openTrailer() { document.getElementById('trailerModal').classList.add('open'); }
+    function closeTrailer() { document.getElementById('trailerModal').classList.remove('open'); }
+
     function openPaymentModal() {
       document.getElementById('paymentModal').classList.add('open');
       resetPaymentModal();
     }
-    function closePaymentModal() {
-      document.getElementById('paymentModal').classList.remove('open');
-    }
+    function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
     function resetPaymentModal() {
       document.getElementById('providerSelection').classList.remove('hidden');
       document.getElementById('instructionStep').classList.add('hidden');
@@ -565,62 +521,37 @@
       if (selectedNetwork) {
         document.getElementById('verificationStep').classList.add('hidden');
         document.getElementById('instructionStep').classList.remove('hidden');
-      } else {
-        resetPaymentModal();
-      }
+      } else resetPaymentModal();
     }
 
-    // ========================
-    //   PAYMENT VERIFICATION
-    // ========================
     async function verifyPayment() {
       const txnInput = document.getElementById('txnIdInput');
       const txnId = txnInput.value.trim();
-      if (!txnId) {
-        alert('Please enter the transaction ID from your mobile money message.');
-        return;
-      }
-
+      if (!txnId) return alert('Please enter the transaction ID.');
       try {
-        // ⚡ This calls YOUR backend function on Vercel
         const res = await fetch('/api/verify-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            transactionId: txnId,
-            amount: 20,             // price in Kwacha
-            network: selectedNetwork
-          })
+          body: JSON.stringify({ transactionId: txnId, amount: 20, network: selectedNetwork })
         });
-
         const data = await res.json();
-        if (data.success) {
-          unlockMovie(data.videoUrl);
-        } else {
-          alert('Verification failed: ' + data.message);
-        }
-      } catch (err) {
-        alert('Network error. Please try again.');
-      }
+        if (data.success) unlockMovie(data.videoUrl);
+        else alert('Verification failed: ' + data.message);
+      } catch (err) { alert('Network error. Please try again.'); }
     }
 
     function unlockMovie(videoUrl) {
       closePaymentModal();
       const section = document.getElementById('privateVideoSection');
       section.style.display = 'block';
-      document.getElementById('videoContainer').innerHTML = `
-        <iframe src="${videoUrl}" frameborder="0" allowfullscreen 
-                style="width:100%; height:60vh; border-radius:8px;"></iframe>
-      `;
+      document.getElementById('videoContainer').innerHTML =
+        `<iframe src="${videoUrl}" frameborder="0" allowfullscreen style="width:100%; height:60vh; border-radius:8px;"></iframe>`;
       section.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Close modals on outside click
     window.addEventListener('click', (e) => {
-      const trailerModal = document.getElementById('trailerModal');
-      const paymentModal = document.getElementById('paymentModal');
-      if (e.target === trailerModal) closeTrailer();
-      if (e.target === paymentModal) closePaymentModal();
+      if (e.target === document.getElementById('trailerModal')) closeTrailer();
+      if (e.target === document.getElementById('paymentModal')) closePaymentModal();
     });
   </script>
 </body>
