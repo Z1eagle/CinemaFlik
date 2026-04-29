@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Cinema – Unlock the Movie</title>
+  <style>
+    /* ===== GLOBAL RESET & VARIABLES ===== */
+    :root {
+      --bg-primary: #141414;
+      --bg-secondary: #181818;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --accent: #E50914;
+      --accent-hover: #f6121d;
+      --overlay-dark: rgba(0, 0, 0, 0.75);
+      --card-bg: #222;
+      --border: #333;
+      --radius: 4px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg-primary);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    .hidden {
+      display: none !important;
+    }
+
+    /* ===== TOP NAV BAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.2rem 5%;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      transition: background 0.3s;
+    }
+    .navbar.scrolled {
+      background: var(--bg-primary);
+    }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .nav-links li:hover {
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      position: relative;
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.45);
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #141414 0%, transparent 60%),
+                  linear-gradient(0deg, #141414 0%, transparent 50%);
+    }
+    .hero-content {
+      position: relative;
+      max-width: 650px;
+      margin-left: 5%;
+      z-index: 2;
+    }
+    .movie-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .movie-meta {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .movie-synopsis {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+    .btn-play {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      backdrop-filter: blur(5px);
+    }
+    .btn-play:hover {
+      background: rgba(255,255,255,0.35);
+    }
+    .btn-pay {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-pay:hover {
+      background: var(--accent-hover);
+      transform: scale(1.03);
+    }
+
+    /* ===== CONTENT ROWS ===== */
+    .content-row {
+      margin: 3rem 5%;
+    }
+    .row-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+    .card-grid {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+    }
+    .card-grid::-webkit-scrollbar {
+      height: 6px;
+    }
+    .card-grid::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
+    }
+    .card {
+      flex: 0 0 200px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--card-bg);
+      transition: transform 0.3s ease, box-shadow 0.3s;
+      cursor: pointer;
+      scroll-snap-align: start;
+      position: relative;
+    }
+    .card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+      z-index: 10;
+    }
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.5rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.9));
+      font-size: 0.9rem;
+    }
+    .bts-card .card-overlay {
+      text-align: center;
+    }
+
+    /* ===== MODALS ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.open {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .close {
+      position: absolute;
+      top: 1rem; right: 1.5rem;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+    .close:hover {
+      color: white;
+    }
+    .modal h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.6rem;
+    }
+
+    /* Provider grid */
+    .provider-grid {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .provider-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, border 0.2s;
+      border: 2px solid transparent;
+      min-width: 120px;
+    }
+    .provider-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    .provider-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: white;
+    }
+    .mtn-logo { background: #FFCC00; color: #000; }
+    .airtel-logo { background: #E40000; }
+    .zamtel-logo { background: #009639; }
+
+    /* Instruction step */
+    .instruction-box {
+      background: #2a2a2a;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+    .instruction-box .number {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin: 0.5rem 0;
+    }
+    .btn-confirm {
+      background: var(--accent);
+      color: white;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    .back-link {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    .back-link:hover { color: white; }
+
+    /* Verification step */
+    .verification-box input {
+      width: 100%;
+      padding: 1rem;
+      background: #2a2a2a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: white;
+      font-size: 1rem;
+      margin: 1rem 0;
+    }
+    .tiny-note {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* Private video section */
+    .private-video-section {
+      margin: 3rem 5%;
+      display: none;
+    }
+    .private-video-section iframe {
+      width: 100%;
+      height: 60vh;
+      border: none;
+      border-radius: 8px;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 2rem 5%;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="logo">🎬 CINEMA</div>
+    <ul class="nav-links">
+      <li>Home</li>
+      <li>Movies</li>
+      <li>Behind the Scenes</li>
+      <li>Contact</li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <video class="hero-bg" autoplay muted loop playsinline>
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="movie-title">The Future Won't Wait</h1>
+      <div class="movie-meta">
+        <span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span>
+      </div>
+      <p class="movie-synopsis">
+        A powerful story of resilience, hope, and the unbreakable spirit of a generation. 
+        Access the full film exclusively after payment.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn btn-play" onclick="openTrailer()">▶ Watch Trailer</button>
+        <button class="btn btn-pay" onclick="openPaymentModal()">🔒 Unlock Full Movie • K20</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOVIE STILLS -->
+  <section class="content-row">
+    <h2 class="row-title">Movie Stills</h2>
+    <div class="card-grid">
+      <div class="card"><img src="https://picsum.photos/400/280?random=1" alt="Still 1" /></div>
+      <div class="card"><img src="https://picsum.photos/400/280?random=2" alt="Still 2" /></div>
+      <div class="card"><img src="https://picsum.photos/400/280?random=3" alt="Still 3" /></div>
+      <div class="card"><img src="https://picsum.photos/400/280?random=4" alt="Still 4" /></div>
+      <div class="card"><img src="https://picsum.photos/400/280?random=5" alt="Still 5" /></div>
+    </div>
+  </section>
+
+  <!-- BEHIND THE SCENES -->
+  <section class="content-row">
+    <h2 class="row-title">Behind the Scenes</h2>
+    <div class="card-grid">
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=10" alt="BTS 1" />
+        <div class="card-overlay">🎬 The Making Of</div>
+      </div>
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=11" alt="BTS 2" />
+        <div class="card-overlay">👥 Cast Interviews</div>
+      </div>
+      <div class="card bts-card">
+        <img src="https://picsum.photos/400/280?random=12" alt="BTS 3" />
+        <div class="card-overlay">📸 On Set</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVATE VIDEO REVEAL (hidden until payment) -->
+  <div class="private-video-section" id="privateVideoSection">
+    <h2 class="row-title">🎥 Now Showing – Full Movie</h2>
+    <div id="videoContainer"></div>
+  </div>
+
+  <!-- TRAILER MODAL -->
+  <div class="modal" id="trailerModal">
+    <div class="modal-content" style="max-width:800px; padding:0.5rem; background:#000;">
+      <span class="close" onclick="closeTrailer()" style="top:0.2rem; right:1rem;">&times;</span>
+      <div style="position:relative; padding-top:56.25%;">
+        <iframe id="trailerIframe" style="position:absolute; top:0; left:0; width:100%; height:100%;" 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                title="Trailer" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT MODAL -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-content">
+      <span class="close" onclick="closePaymentModal()">&times;</span>
+      
+      <!-- Step 1: Provider Selection -->
+      <div id="providerSelection">
+        <h2>Select Your Mobile Money Provider</h2>
+        <div class="provider-grid">
+          <div class="provider-card" onclick="showInstructions('mtn')">
+            <div class="provider-logo mtn-logo">MTN</div>
+            <span>MTN MoMo</span>
+          </div>
+          <div class="provider-card" onclick="showInstructions('airtel')">
+            <div class="provider-logo airtel-logo">Airtel</div>
+            <span>Airtel Money</span>
+          </div>
+          <div class="provider-card" onclick="showInstructions('zamtel')">
+            <div class="provider-logo zamtel-logo">Zamtel</div>
+            <span>Zamtel Kwacha</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Payment Instructions -->
+      <div id="instructionStep" class="hidden">
+        <h2>Complete Your Payment</h2>
+        <div class="instruction-box">
+          <p>Send exactly <strong>K20</strong> to:</p>
+          <div class="number" id="merchantNumber">097XXXXXXX</div>
+          <p>Network: <strong id="networkName">MTN</strong></p>
+          <p style="font-size:0.9rem; color:#b3b3b3;">Use your mobile money menu (USSD) to send the payment.</p>
+        </div>
+        <button class="btn btn-confirm" onclick="showVerification()">I've Sent the Payment →</button>
+        <div class="back-link" onclick="goBackToProviders()">← Choose another network</div>
+      </div>
+
+      <!-- Step 3: Verification -->
+      <div id="verificationStep" class="hidden">
+        <h2>Almost There!</h2>
+        <p>Enter the <strong>transaction ID</strong> from your mobile money SMS.</p>
+        <div class="verification-box">
+          <input type="text" id="txnIdInput" placeholder="e.g. MPE1234567" />
+          <button class="btn btn-pay" onclick="verifyPayment()" style="width:100%; margin-top:0.5rem;">Verify & Unlock</button>
+        </div>
+        <p class="tiny-note">No other details needed. We only check your transaction.</p>
+        <div class="back-link" onclick="goBackToInstructions()">← Change payment method</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Digital Cinema. All rights reserved. | <a href="#" style="color:var(--text-secondary)">Privacy Policy</a></p>
+  </footer>
+
+  <script>
+    // ========================
+    //   GLOBAL STATE
+    // ========================
+    let selectedNetwork = null;
+
+    // 🔴 REPLACE THESE WITH YOUR REAL MERCHANT NUMBERS
+    const merchantNumbers = {
+      mtn: '0971234567',    // your MTN number customers send K20 to
+      airtel: '0977654321', // your Airtel number
+      zamtel: '0955555555'  // your Zamtel number
+    };
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // Trailer modal
+    function openTrailer() {
+      document.getElementById('trailerModal').classList.add('open');
+    }
+    function closeTrailer() {
+      document.getElementById('trailerModal').classList.remove('open');
+    }
+
+    // Payment modal
+    function openPaymentModal() {
+      document.getElementById('paymentModal').classList.add('open');
+      resetPaymentModal();
+    }
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.remove('open');
+    }
+    function resetPaymentModal() {
+      document.getElementById('providerSelection').classList.remove('hidden');
+      document.getElementById('instructionStep').classList.add('hidden');
+      document.getElementById('verificationStep').classList.add('hidden');
+      selectedNetwork = null;
+    }
+
+    function showInstructions(network) {
+      selectedNetwork = network;
+      document.getElementById('providerSelection').classList.add('hidden');
+      document.getElementById('instructionStep').classList.remove('hidden');
+      document.getElementById('verificationStep').classList.add('hidden');
+      document.getElementById('merchantNumber').innerText = merchantNumbers[network];
+      document.getElementById('networkName').innerText = network.toUpperCase();
+    }
+
+    function showVerification() {
+      document.getElementById('instructionStep').classList.add('hidden');
+      document.getElementById('verificationStep').classList.remove('hidden');
+    }
+
+    function goBackToProviders() { resetPaymentModal(); }
+    function goBackToInstructions() {
+      if (selectedNetwork) {
+        document.getElementById('verificationStep').classList.add('hidden');
+        document.getElementById('instructionStep').classList.remove('hidden');
+      } else {
+        resetPaymentModal();
+      }
+    }
+
+    // ========================
+    //   PAYMENT VERIFICATION
+    // ========================
+    async function verifyPayment() {
+      const txnInput = document.getElementById('txnIdInput');
+      const txnId = txnInput.value.trim();
+      if (!txnId) {
+        alert('Please enter the transaction ID from your mobile money message.');
+        return;
+      }
+
+      try {
+        // ⚡ This calls YOUR backend function on Vercel
+        const res = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transactionId: txnId,
+            amount: 20,             // price in Kwacha
+            network: selectedNetwork
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          unlockMovie(data.videoUrl);
+        } else {
+          alert('Verification failed: ' + data.message);
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    }
+
+    function unlockMovie(videoUrl) {
+      closePaymentModal();
+      const section = document.getElementById('privateVideoSection');
+      section.style.display = 'block';
+      document.getElementById('videoContainer').innerHTML = `
+        <iframe src="${videoUrl}" frameborder="0" allowfullscreen 
+                style="width:100%; height:60vh; border-radius:8px;"></iframe>
+      `;
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Close modals on outside click
+    window.addEventListener('click', (e) => {
+      const trailerModal = document.getElementById('trailerModal');
+      const paymentModal = document.getElementById('paymentModal');
+      if (e.target === trailerModal) closeTrailer();
+      if (e.target === paymentModal) closePaymentModal();
+    });
+  </script>
+</body>
+</html>
