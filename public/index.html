@@ -2,10 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CinemAfric – Watch Now</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>CinemAfric – Chikamoneka | Watch Now</title>
+  <meta name="description" content="Watch Chikamoneka and more Zambian movies on CinemAfric. Pay via MTN, Airtel, Zamtel, or international mobile money." />
+  <meta property="og:title" content="Chikamoneka – Now Showing on CinemAfric" />
+  <meta property="og:description" content="A powerful story of resilience and hope. Unlock the full movie with mobile money." />
+  <meta property="og:image" content="https://picsum.photos/400/600?random=99" />
+  <meta property="og:url" content="https://cinemafric.vercel.app" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics 4 – replace G-XXXXXXXXXX -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- Flutterwave script -->
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
+
   <style>
-    /* ===== GLOBAL RESET & VARIABLES ===== */
     :root {
       --bg-primary: #0a0a0a;
       --bg-secondary: #151515;
@@ -14,9 +35,15 @@
       --accent: #E50914;
       --accent-hover: #ff1a1a;
       --card-bg: #1a1a1a;
-      --border: #2a2a2a;
-      --radius: 6px;
+      --radius: 8px;
+      --gold: #f5c518;
+      --margin-left: 3.4%;
+      --sidebar-width: 320px;
+      --sidebar-gap: 30px;
+      --btn-min-height: 44px;
+      --poster-width: clamp(280px, 30vw, 400px);
     }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: var(--bg-primary);
@@ -26,422 +53,398 @@
       overflow-x: hidden;
     }
     a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
+    img { max-width: 100%; display: block; height: auto; }
     .hidden { display: none !important; }
 
-    /* ===== TOP NAV BAR ===== */
-    .navbar {
-      position: fixed;
-      top: 0; left: 0; width: 100%;
-      padding: 1.2rem 5%;
-      z-index: 100;
-      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
-      display: flex;
-      align-items: center;
-      transition: background 0.3s;
+    /* ---------- WELCOME ---------- */
+    #welcome-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.92); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; opacity: 1; transition: opacity 0.5s ease;
     }
+    #welcome-overlay.fade-out { opacity: 0; pointer-events: none; }
+    .welcome-text {
+      font-size: clamp(1.8rem, 8vw, 4rem); font-weight: 800;
+      background: linear-gradient(135deg, var(--gold), #fff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center; line-height: 1.2; padding: 0 1rem;
+      animation: welcomeZoom 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      text-shadow: 0 0 20px rgba(245,197,24,0.4);
+    }
+    .welcome-sub {
+      margin-top: 1rem; font-size: clamp(1rem, 3vw, 1.2rem);
+      color: var(--text-secondary);
+      animation: fadeInUp 1.5s ease 0.3s both;
+    }
+    @keyframes welcomeZoom {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1.1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      0% { transform: translateY(15px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ---------- NAVBAR ---------- */
+    .navbar {
+      position: fixed; top: 0; left: 0; width: 100%; padding: 1rem 5%;
+      z-index: 100; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+      display: flex; align-items: flex-end; gap: 0.6rem; transition: background 0.3s;
+    }
+    @media (min-width: 769px) { .navbar { padding-left: 3.4%; padding-right: 5%; } }
     .navbar.scrolled { background: var(--bg-primary); }
     .logo {
-      font-size: 1.84rem;               /* increased 15% from 1.6rem */
-      font-weight: 800;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 400; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; line-height: 0.9;
+    }
+    .nav-slogan {
+      font-size: clamp(0.7rem, 2vw, 0.9rem); color: var(--gold); font-style: italic;
+      letter-spacing: 0.5px; margin-bottom: 0.1rem; white-space: nowrap;
     }
 
-    /* ===== HERO SECTION ===== */
+    /* ---------- HERO ---------- */
     .hero {
-      position: relative;
-      height: 90vh;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
+      position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden;
     }
     .hero-bg {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      filter: brightness(0.4);
-      pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; filter: brightness(0.35); pointer-events: none;
     }
     .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, #0a0a0a 0%, transparent 60%),
-                  linear-gradient(0deg, #0a0a0a 0%, transparent 50%);
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(10,10,10,0.95) 0%, transparent 60%),
+                  linear-gradient(0deg, rgba(10,10,10,0.8) 0%, transparent 50%);
+      pointer-events: none;   /* <--- THE FIX: allows clicks to pass through */
     }
-    .hero-content {
-      position: relative;
-      z-index: 2;
+    @media (max-width: 768px) {
+      .hero-overlay {
+        background: none;        /* mobile overlay is invisible */
+        pointer-events: none;   /* still ensures clicks pass through */
+      }
+    }
+
+    /* =================== DESKTOP LAYOUT (>768px) =================== */
+    @media (min-width: 769px) {
+      .hero-poster {
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        width: var(--poster-width); aspect-ratio: 2 / 3;
+        border-radius: 12px; overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 0 3px var(--accent);
+        background: #000; z-index: 90;
+      }
+      .hero-text-wrapper {
+        margin-left: var(--margin-left);
+        margin-right: calc(var(--sidebar-width) + var(--sidebar-gap) + 40px);
+        max-width: 550px; z-index: 2; text-align: left;
+      }
+      .movie-meta { justify-content: flex-start; }
+      .movie-synopsis { margin-left: 0; margin-right: 0; }
+      .hero-buttons { display: flex; gap: 0.8rem; align-items: center; flex-wrap: nowrap; }
+      .gap-decoration {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        position: absolute; top: 50%; transform: translateY(-50%);
+        left: calc(50% + var(--poster-width) / 2 + 20px - 1.5vw);
+        right: calc(var(--sidebar-gap) + var(--sidebar-width) - 10px);
+        z-index: 5; pointer-events: none;
+      }
+      #poster-sidebar { display: flex; }
+      .mobile-movies { display: none !important; }
+      .content-wrapper {
+        margin-left: var(--margin-left);
+        margin-right: calc(var(--margin-left) + var(--sidebar-width) + var(--sidebar-gap));
+      }
+    }
+
+    /* =================== MOBILE LAYOUT (≤768px) =================== */
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column; justify-content: flex-start;
+        padding-top: 100px; padding-bottom: 40px; align-items: center;
+      }
+      .hero-poster {
+        width: 80%; max-width: 300px; aspect-ratio: 2 / 3;
+        border-radius: 12px; overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 0 3px var(--accent);
+        background: #000; margin-bottom: 1.5rem;
+        position: relative; left: auto; top: auto; transform: none;
+      }
+      .hero-text-wrapper { width: 90%; text-align: center; margin: 0 auto; }
+      .hero-buttons { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-bottom: 1rem; }
+      #poster-sidebar { display: none !important; }
+      .gap-decoration { display: none !important; }
+      .mobile-movies {
+        display: flex !important; margin: 0 5% 2rem; overflow-x: auto; gap: 1rem;
+        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+      }
+      .content-wrapper { margin-left: 5%; margin-right: 5%; width: 90%; }
+    }
+
+    /* =================== SHARED ELEMENTS =================== */
+    .hero-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+    .hero-poster .badge {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--accent); color: white; text-align: center;
+      font-size: clamp(1.4rem, 4vw, 2.2rem); font-weight: 700;
+      text-transform: uppercase; padding: 0.5rem; letter-spacing: 1px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     }
     .movie-title {
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
+      font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; line-height: 1.1; margin-bottom: 0.5rem; text-shadow: 2px 2px 10px black;
     }
-    .movie-meta {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .movie-synopsis {
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.8);
-      margin-bottom: 2rem;
-      max-width: 500px;
-    }
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .hero-buttons.share-row {
-      margin-top: 1rem;
-      margin-bottom: 0;
-    }
+    .movie-meta { font-size: clamp(0.9rem, 2vw, 1.1rem); color: var(--text-secondary); margin-bottom: 0.6rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .movie-synopsis { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.85); margin-bottom: 0.4rem; max-width: 500px; }
+    .movie-director { font-size: clamp(0.8rem, 2vw, 1rem); color: var(--gold); margin-bottom: 1.2rem; font-style: italic; }
+
     .btn {
-      padding: 0.8rem 2rem;
-      border: none;
-      border-radius: var(--radius);
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-      letter-spacing: 0.5px;
+      min-height: var(--btn-min-height); padding: 0.6rem 1.5rem; border: none; border-radius: var(--radius);
+      font-weight: 700; font-size: clamp(0.9rem, 2vw, 1.1rem); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease;
+      letter-spacing: 0.3px; white-space: nowrap; touch-action: manipulation;
     }
-    .btn-play {
-      background: rgba(255,255,255,0.15);
-      color: white;
-      backdrop-filter: blur(5px);
-    }
-    .btn-play:hover { background: rgba(255,255,255,0.3); }
-    .btn-pay {
-      background: var(--accent);
-      color: white;
-    }
-    .btn-pay:hover { background: var(--accent-hover); transform: scale(1.03); }
-    .btn-share {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(5px);
-    }
-    .btn-share:hover {
-      background: rgba(255,255,255,0.25);
-      border-color: rgba(255,255,255,0.5);
-    }
+    .btn-play { background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(5px); }
+    .btn-play:hover { background: rgba(255,255,255,0.4); }
+    .btn-pay { background: var(--accent); color: white; }
+    .btn-pay:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .btn-share { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px); }
+    .btn-share:hover { background: rgba(255,255,255,0.25); }
 
-    /* ===== MAIN CONTENT WRAPPER ===== */
-    .main-content {
-      margin-left: 7.5%;
+    /* ---------- GAP DECORATION (desktop clock) ---------- */
+    .live-clock {
+      background: rgba(20,20,20,0.85); backdrop-filter: blur(8px);
+      border: 1px solid var(--gold); border-radius: 12px;
+      padding: 0.8rem 1.4rem; text-align: center;
+      color: white; font-weight: 700; letter-spacing: 1px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     }
-    @media (min-width: 769px) {
-      .main-content {
-        margin-right: calc(7.5% + 320px);
-        max-width: none;
-      }
-    }
-    @media (max-width: 768px) {
-      .main-content {
-        margin-right: 5%;
-        max-width: 650px;
-      }
-    }
+    .clock-time { font-size: 1.8rem; font-family: 'Courier New', monospace; color: var(--gold); line-height: 1; }
+    .clock-label { margin-top: 0.3rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); }
 
-    /* ===== FIXED POSTER SIDEBAR ===== */
+    /* ---------- FIXED SIDEBAR (desktop) ---------- */
     #poster-sidebar {
-      position: fixed;
-      top: 0;
-      right: 30px;
-      bottom: 0;
-      z-index: 80;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;   /* start from top, no cut‑off */
-      gap: 20px;
-      padding-top: 20px;             /* a little breathing room */
-      pointer-events: none;
-      max-height: 100vh;
-      overflow-y: auto;
+      position: fixed; top: 0; right: var(--sidebar-gap); bottom: 0;
+      display: flex; flex-direction: column; justify-content: flex-start; gap: 20px;
+      padding-top: 30px; pointer-events: none; max-height: 100vh; overflow-y: auto;
+      width: var(--sidebar-width); z-index: 80;
     }
     .poster-card {
-      width: 280px;
-      height: 420px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
-      border: 2px solid var(--accent);
-      background: #000;
-      position: relative;
-      cursor: pointer;
+      width: 100%; height: auto; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.9); border: 2px solid var(--accent);
+      background: #000; position: relative; pointer-events: auto; flex-shrink: 0;
       transition: transform 0.3s;
-      pointer-events: auto;
-      flex-shrink: 0;
     }
-    .poster-card:hover { transform: scale(1.03); }
-    .poster-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.9;
+    .poster-card:hover { transform: scale(1.02); }
+    .poster-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+    .poster-btn {
+      position: absolute; bottom: 10px; left: 10px; right: 10px;
+      background: var(--accent); color: white; text-align: center; padding: 0.5rem;
+      font-weight: 700; font-size: 0.9rem; border-radius: 6px; cursor: pointer;
+      transition: background 0.2s;
     }
-    .poster-label {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      color: white;
-      text-align: center;
-      padding: 0.6rem;
-      font-weight: 700;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      background-color: rgba(229,9,20,0.7);
+    .poster-btn:hover { background: var(--accent-hover); }
+
+    /* ---------- MOBILE SIDEBAR ---------- */
+    .mobile-movies { display: none; }
+    .mobile-movies .mobile-card {
+      flex: 0 0 auto; width: 150px; aspect-ratio: 2/3; border-radius: 10px; overflow: hidden;
+      border: 2px solid var(--accent); position: relative; scroll-snap-align: start; background: #000;
     }
-    .poster-label.coming-soon {
-      background-color: rgba(0,0,0,0.8);
+    .mobile-movies .mobile-card img { width: 100%; height: 100%; object-fit: cover; }
+    .mobile-movies .mobile-card .mobile-unlock-btn {
+      position: absolute; bottom: 8px; left: 8px; right: 8px;
+      background: var(--accent); color: white; text-align: center; font-weight: 700;
+      font-size: 0.8rem; padding: 0.4rem; border-radius: 4px; cursor: pointer;
     }
 
-    @media (max-width: 768px) {
-      #poster-sidebar { display: none; }
-    }
-
-    /* ===== WHATSAPP BUBBLE ===== */
+    /* ---------- WHATSAPP BUBBLE ---------- */
     .whatsapp-bubble {
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      background: #25D366;
-      color: white;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      z-index: 90;
-      cursor: pointer;
-      transition: transform 0.2s;
-      border: none;
+      position: fixed; bottom: 20px; left: 20px; background: #25D366; color: white;
+      width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4); z-index: 90; cursor: pointer; transition: transform 0.2s; border: none;
     }
     .whatsapp-bubble:hover { transform: scale(1.1); }
-    .whatsapp-bubble svg {
-      width: 32px;
-      height: 32px;
-      fill: white;
-    }
+    .whatsapp-bubble svg { width: 26px; height: 26px; fill: white; }
 
-    /* ===== CONTENT ROWS (Stills & BTS) ===== */
-    .content-row {
-      margin: 3rem 0;
+    /* ---------- VISITOR COUNTER ---------- */
+    .visitor-counter {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(10px);
+      padding: 0.4rem 1.2rem; border-radius: 50px; color: white; font-size: 0.8rem;
+      z-index: 50; display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .row-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 1.2rem;
+    .visitor-counter span { font-weight: 700; color: var(--gold); }
+
+    /* ---------- CONTENT SECTIONS ---------- */
+    .content-wrapper section:first-child { padding-top: 2rem; }
+    .section-title {
+      font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 700; margin-bottom: 1rem;
+      color: white; position: relative; display: inline-block;
+    }
+    .section-title::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; width: 50px; height: 3px;
+      background: var(--accent); border-radius: 2px;
     }
     .card-grid {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      padding-bottom: 1rem;
-      scroll-snap-type: x mandatory;
+      display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;
+      scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
     }
-    .card-grid::-webkit-scrollbar { height: 6px; }
-    .card-grid::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    .card-grid::-webkit-scrollbar { height: 4px; }
+    .card-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
     .card {
-      flex: 0 0 200px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: var(--card-bg);
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      scroll-snap-align: start;
-      position: relative;
+      flex: 0 0 auto; width: clamp(150px, 40vw, 220px); border-radius: var(--radius);
+      overflow: hidden; background: #111; transition: transform 0.3s ease;
+      cursor: pointer; scroll-snap-align: start; position: relative;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
     }
-    .card img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-    }
-    .card:hover { transform: scale(1.08); z-index: 10; }
+    .card:hover { transform: translateY(-6px) scale(1.02); }
+    .card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
     .card-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      padding: 0.5rem;
-      background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      font-size: 0.9rem;
-      text-align: center;
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 0.5rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.95)); font-size: 0.8rem; text-align: center;
+      font-weight: 600; color: white;
     }
 
-    /* ===== MODALS (unchanged) ===== */
+    /* ---------- MODALS ---------- */
     .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center;
+      padding: 1rem;
     }
     .modal.open { display: flex; }
     .modal-content {
-      background: var(--bg-secondary);
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      padding: 2rem;
-      position: relative;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-      max-height: 90vh;
-      overflow-y: auto;
+      background: var(--bg-secondary); border-radius: 12px; width: 100%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto; padding: 1.5rem; position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
     }
-    .close {
-      position: absolute;
-      top: 1rem; right: 1.5rem;
-      font-size: 2rem;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: color 0.2s;
-    }
+    .close { position: absolute; top: 0.8rem; right: 1rem; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); z-index: 10; }
     .close:hover { color: white; }
-    .modal h2 { margin-bottom: 1.5rem; font-size: 1.6rem; }
-
-    .provider-grid {
-      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
-    }
+    .modal h2 { margin-bottom: 1rem; font-size: 1.4rem; }
+    .provider-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
     .provider-card {
-      background: var(--card-bg); border-radius: 8px; padding: 1.5rem 2rem;
+      background: var(--card-bg); border-radius: 10px; padding: 0.8rem 1rem;
       text-align: center; cursor: pointer; transition: transform 0.2s, border 0.2s;
-      border: 2px solid transparent; min-width: 120px;
+      border: 2px solid transparent; min-width: 90px; flex: 1 1 auto;
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
     }
-    .provider-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-    .provider-logo {
-      width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 0.8rem;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 1.5rem; color: white;
-    }
-    .mtn-logo { background: #FFCC00; color: #000; }
-    .airtel-logo { background: #E40000; }
-    .zamtel-logo { background: #009639; }
+    .provider-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .provider-logo { width: 40px; height: 40px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+    .provider-label { font-weight: 600; font-size: 0.8rem; }
+    .thank-you-message { color: var(--gold); font-size: 0.85rem; text-align: center; margin-top: 0.5rem; font-style: italic; }
+    .instruction-box { background: #2a2a2a; padding: 1.2rem; border-radius: 6px; margin: 1rem 0; text-align: center; }
+    .instruction-box .number { font-size: 1.8rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); margin: 0.3rem 0; }
+    .btn-confirm { background: var(--accent); color: white; width: 100%; margin-top: 0.8rem; }
+    .back-link { color: var(--text-secondary); font-size: 0.8rem; cursor: pointer; margin-top: 0.8rem; display: inline-block; }
+    .verification-box input { width: 100%; padding: 0.8rem; background: #2a2a2a; border: 1px solid #333; border-radius: var(--radius); color: white; font-size: 0.95rem; margin: 0.8rem 0; }
+    .tiny-note { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.4rem; }
+    .private-video-section { margin: 2rem 0; display: none; }
+    .private-video-section iframe { width: 100%; height: 50vh; border: none; border-radius: 8px; }
+    @media (max-width: 480px) { .private-video-section iframe { height: 35vh; } }
 
-    .instruction-box {
-      background: #2a2a2a; padding: 1.5rem; border-radius: 6px; margin: 1.5rem 0; text-align: center;
-    }
-    .instruction-box .number {
-      font-size: 2rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); margin: 0.5rem 0;
-    }
-    .btn-confirm { background: var(--accent); color: white; width: 100%; margin-top: 1rem; }
-    .back-link {
-      color: var(--text-secondary); font-size: 0.9rem; cursor: pointer; margin-top: 1rem; display: inline-block;
-    }
-    .back-link:hover { color: white; }
-
-    .verification-box input {
-      width: 100%; padding: 1rem; background: #2a2a2a; border: 1px solid var(--border);
-      border-radius: var(--radius); color: white; font-size: 1rem; margin: 1rem 0;
-    }
-    .tiny-note { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
-
-    .private-video-section {
-      margin: 3rem 0; display: none;
-    }
-    .private-video-section iframe {
-      width: 100%; height: 60vh; border: none; border-radius: 8px;
-    }
-
-    /* ===== FOOTER ===== */
+    /* ---------- FOOTER ---------- */
     .footer {
-      padding: 2rem 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      border-top: 1px solid var(--border);
-      margin-top: 4rem;
-      text-align: center;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      padding: 1.5rem 0; color: var(--text-secondary); font-size: 0.8rem; border-top: 1px solid #222;
+      margin-top: 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;
     }
-    .footer a { color: white; text-decoration: underline; }   /* email now white */
-    @media (max-width: 768px) {
-      .footer { flex-direction: column; }
-    }
+    .footer a { color: white; text-decoration: underline; }
+    @media (max-width: 480px) { .footer { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
-  <!-- NAV -->
+
+  <!-- WELCOME ANIMATION -->
+  <div id="welcome-overlay">
+    <div class="welcome-text">Welcome to CinemAfric</div>
+    <div class="welcome-sub">🍿 Enjoy your experience and movie</div>
+  </div>
+
+  <!-- NAVBAR -->
   <nav class="navbar" id="navbar">
-    <div class="logo">🎬 CinemaFlik</div>
+    <div class="logo">CinemAfric</div>
+    <span class="nav-slogan">For Cinema Lovers</span>
   </nav>
 
-  <!-- HERO – NOW SHOWING -->
+  <!-- HERO SECTION -->
   <section class="hero">
-    <video class="hero-bg" autoplay muted loop playsinline>
+    <video class="hero-bg" autoplay muted loop playsinline disablepictureinpicture>
       <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4" />
     </video>
     <div class="hero-overlay"></div>
-    <div class="main-content">
-      <div class="hero-content">
-        <h1 class="movie-title">The Future Won't Wait</h1>
-        <div class="movie-meta"><span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span></div>
-        <p class="movie-synopsis">A powerful story of resilience, hope, and the unbreakable spirit of a generation.</p>
-        <div class="hero-buttons">
-          <button class="btn btn-play" onclick="openTrailer()">▶ Watch Trailer</button>
-          <button class="btn btn-pay" onclick="openPaymentModal()">🔒 Unlock Full Movie • K20</button>
-        </div>
-        <div class="hero-buttons share-row">
-          <button class="btn btn-share" onclick="sharePage()">📤 Share</button>
-        </div>
+
+    <!-- Poster -->
+    <div class="hero-poster" id="heroPoster">
+      <img src="https://picsum.photos/400/600?random=99" alt="Now Showing" />
+      <div class="badge">Now Showing</div>
+    </div>
+
+    <!-- Text + buttons -->
+    <div class="hero-text-wrapper">
+      <h1 class="movie-title">Chikamoneka</h1>
+      <div class="movie-meta"><span>Drama</span><span>•</span><span>2026</span><span>•</span><span>2h 4m</span></div>
+      <p class="movie-synopsis">A powerful story of resilience, hope, and the unbreakable spirit of a generation.</p>
+      <p class="movie-director">Directed by Chewe Stanley Musonda</p>
+      <div class="hero-buttons">
+        <button class="btn btn-play" onclick="openTrailer()">▶ Watch Trailer</button>
+        <button class="btn btn-pay" onclick="openPaymentModal('movie1')">🔒 Unlock Full Movie • K20</button>
+        <button class="btn btn-share" onclick="sharePage()">📤 Share</button>
+      </div>
+    </div>
+
+    <!-- Gap decoration (desktop only) -->
+    <div class="gap-decoration" id="gapDecoration">
+      <div class="live-clock" id="liveClock">
+        <div class="clock-time" id="clockDisplay">00:00:00.000</div>
+        <div class="clock-label">Local Time</div>
       </div>
     </div>
   </section>
 
-  <!-- FIXED POSTER SIDEBAR -->
+  <!-- MOBILE SIDEBAR -->
+  <div class="mobile-movies" id="mobileMovies">
+    <div class="mobile-card">
+      <img src="https://picsum.photos/560/840?random=50" alt="Movie 2" />
+      <div class="mobile-unlock-btn" onclick="openPaymentModal('movie2')">Unlock • K15</div>
+    </div>
+    <div class="mobile-card">
+      <img src="https://picsum.photos/560/840?random=60" alt="Movie 3" />
+      <div class="mobile-unlock-btn" onclick="openPaymentModal('movie3')">Unlock • K10</div>
+    </div>
+    <div class="mobile-card">
+      <img src="https://picsum.photos/560/840?random=61" alt="Movie 4" />
+      <div class="mobile-unlock-btn" onclick="openPaymentModal('movie4')">Unlock • K10</div>
+    </div>
+  </div>
+
+  <!-- FIXED SIDEBAR (desktop) -->
   <div id="poster-sidebar">
-    <div class="poster-card" onclick="document.querySelector('.hero').scrollIntoView({behavior:'smooth'})">
-      <img src="https://picsum.photos/560/840?random=50" alt="Now Showing" />
-      <div class="poster-label">Now Showing</div>
+    <div class="poster-card">
+      <img src="https://picsum.photos/560/840?random=50" alt="Movie 2" />
+      <div class="poster-btn" onclick="openPaymentModal('movie2')">Unlock Full Movie • K15</div>
     </div>
     <div class="poster-card">
-      <img src="https://picsum.photos/560/840?random=60" alt="Coming Soon" />
-      <div class="poster-label coming-soon">Coming Soon</div>
+      <img src="https://picsum.photos/560/840?random=60" alt="Movie 3" />
+      <div class="poster-btn" onclick="openPaymentModal('movie3')">Unlock Full Movie • K10</div>
     </div>
     <div class="poster-card">
-      <img src="https://picsum.photos/560/840?random=61" alt="Coming Soon" />
-      <div class="poster-label coming-soon">Coming Soon</div>
+      <img src="https://picsum.photos/560/840?random=61" alt="Movie 4" />
+      <div class="poster-btn" onclick="openPaymentModal('movie4')">Unlock Full Movie • K10</div>
     </div>
   </div>
 
-  <!-- WHATSAPP SHARE BUTTON -->
+  <!-- WHATSAPP BUBBLE -->
   <div class="whatsapp-bubble" onclick="shareOnWhatsApp()" title="Share on WhatsApp">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-    </svg>
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </div>
 
-  <!-- MAIN CONTENT (Stills, BTS, Footer) -->
-  <div class="main-content">
+  <!-- VISITOR COUNTER -->
+  <div class="visitor-counter" id="visitorCounter">👥 <span id="visitorCount">---</span> visitors</div>
 
-    <!-- MOVIE STILLS (6 cards) -->
-    <section class="content-row">
-      <h2 class="row-title">Movie Stills</h2>
+  <!-- MAIN CONTENT -->
+  <div class="content-wrapper">
+    <section>
+      <h2 class="section-title">Movie Stills</h2>
       <div class="card-grid">
         <div class="card"><img src="https://picsum.photos/400/280?random=1" alt="Still 1" /></div>
         <div class="card"><img src="https://picsum.photos/400/280?random=2" alt="Still 2" /></div>
@@ -452,44 +455,23 @@
       </div>
     </section>
 
-    <!-- BEHIND THE SCENES -->
-    <section class="content-row">
-      <h2 class="row-title">Behind the Scenes</h2>
+    <section style="margin-top: 3rem;">
+      <h2 class="section-title">Behind the Scenes</h2>
       <div class="card-grid">
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=10" alt="BTS 1" />
-          <div class="card-overlay">🎬 The Making Of</div>
-        </div>
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=11" alt="BTS 2" />
-          <div class="card-overlay">👥 Cast Interviews</div>
-        </div>
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=12" alt="BTS 3" />
-          <div class="card-overlay">📸 On Set</div>
-        </div>
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=13" alt="BTS 4" />
-          <div class="card-overlay">🎥 Director’s Cut</div>
-        </div>
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=14" alt="BTS 5" />
-          <div class="card-overlay">🌍 Location Scouting</div>
-        </div>
-        <div class="card bts-card">
-          <img src="https://picsum.photos/400/280?random=15" alt="BTS 6" />
-          <div class="card-overlay">💡 Lighting Setup</div>
-        </div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=10" alt="BTS 1" /><div class="card-overlay">🎬 The Making Of</div></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=11" alt="BTS 2" /><div class="card-overlay">👥 Cast Interviews</div></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=12" alt="BTS 3" /><div class="card-overlay">📸 On Set</div></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=13" alt="BTS 4" /><div class="card-overlay">🎥 Director’s Cut</div></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=14" alt="BTS 5" /><div class="card-overlay">🌍 Location Scouting</div></div>
+        <div class="card"><img src="https://picsum.photos/400/280?random=15" alt="BTS 6" /><div class="card-overlay">💡 Lighting Setup</div></div>
       </div>
     </section>
 
-    <!-- PRIVATE VIDEO REVEAL (unchanged) -->
     <div class="private-video-section" id="privateVideoSection">
-      <h2 class="row-title">🎥 Now Showing – Full Movie</h2>
+      <h2 class="section-title" id="unlockTitle">🎥 Now Showing</h2>
       <div id="videoContainer"></div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer">
       <p>© 2026 CinemAfric. All rights reserved.</p>
       <p>📧 <a href="mailto:Cinemafric@gmail.com">Cinemafric@gmail.com</a></p>
@@ -503,81 +485,143 @@
       <div style="position:relative; padding-top:56.25%;">
         <iframe id="trailerIframe" style="position:absolute; top:0; left:0; width:100%; height:100%;"
                 src="https://www.youtube.com/embed/wHaidC9NJ3g"
+                referrerpolicy="strict-origin-when-cross-origin"
                 title="Trailer" frameborder="0" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
-  <!-- PAYMENT MODAL (unchanged) -->
+  <!-- PAYMENT MODAL -->
   <div class="modal" id="paymentModal">
     <div class="modal-content">
       <span class="close" onclick="closePaymentModal()">&times;</span>
       <div id="providerSelection">
-        <h2>Select Your Mobile Money Provider</h2>
+        <h2 id="modalMovieTitle">Select Payment Method</h2>
+        <p id="modalMoviePrice" style="font-weight:bold; margin-bottom:1rem;"></p>
         <div class="provider-grid">
-          <div class="provider-card" onclick="showInstructions('mtn')"><div class="provider-logo mtn-logo">MTN</div><span>MTN MoMo</span></div>
-          <div class="provider-card" onclick="showInstructions('airtel')"><div class="provider-logo airtel-logo">Airtel</div><span>Airtel Money</span></div>
-          <div class="provider-card" onclick="showInstructions('zamtel')"><div class="provider-logo zamtel-logo">Zamtel</div><span>Zamtel Kwacha</span></div>
+          <div class="provider-card" onclick="showInstructions('mtn')">
+            <div class="provider-logo" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%23FFCC00%27><circle cx=%2712%27 cy=%2712%27 r=%2712%27/><text x=%2712%27 y=%2716%27 text-anchor=%27middle%27 fill=%27%23000%27 font-size=%2710%27 font-weight=%27bold%27>MTN</text></svg>')"></div>
+            <span class="provider-label">MTN MoMo</span>
+          </div>
+          <div class="provider-card" onclick="showInstructions('airtel')">
+            <div class="provider-logo" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%23E40000%27><circle cx=%2712%27 cy=%2712%27 r=%2712%27/><text x=%2712%27 y=%2716%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2710%27 font-weight=%27bold%27>Airtel</text></svg>')"></div>
+            <span class="provider-label">Airtel Money</span>
+          </div>
+          <div class="provider-card" onclick="showInstructions('zamtel')">
+            <div class="provider-logo" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%23009639%27><circle cx=%2712%27 cy=%2712%27 r=%2712%27/><text x=%2712%27 y=%2716%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2710%27 font-weight=%27bold%27>Zamtel</text></svg>')"></div>
+            <span class="provider-label">Zamtel Kwacha</span>
+          </div>
+          <div class="provider-card" id="flutterwaveBtn">
+            <div class="provider-logo" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%23F5A623%27><circle cx=%2712%27 cy=%2712%27 r=%2712%27/><text x=%2712%27 y=%2716%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2710%27 font-weight=%27bold%27>F</text></svg>')"></div>
+            <span class="provider-label">Flutterwave / Mobile Money</span>
+          </div>
         </div>
+        <p class="thank-you-message">Thank you for your support! 🍿</p>
       </div>
       <div id="instructionStep" class="hidden">
         <h2>Complete Your Payment</h2>
         <div class="instruction-box">
-          <p>Send exactly <strong>K20</strong> to:</p>
+          <p>Send exactly <strong id="instructionAmount">K20</strong> to:</p>
           <div class="number" id="merchantNumber">097XXXXXXX</div>
           <p>Network: <strong id="networkName">MTN</strong></p>
           <p style="font-size:0.9rem; color:#b3b3b3;">Use your mobile money menu (USSD) to send the payment.</p>
         </div>
         <button class="btn btn-confirm" onclick="showVerification()">I've Sent the Payment →</button>
-        <div class="back-link" onclick="goBackToProviders()">← Choose another network</div>
+        <div class="back-link" onclick="goBackToProviders()">← Choose another method</div>
       </div>
       <div id="verificationStep" class="hidden">
         <h2>Almost There!</h2>
-        <p>Enter the <strong>transaction ID</strong> from your mobile money SMS.</p>
+        <p>Enter the <strong>transaction ID</strong> from your payment confirmation.</p>
         <div class="verification-box">
           <input type="text" id="txnIdInput" placeholder="e.g. MPE1234567" />
           <button class="btn btn-pay" onclick="verifyPayment()" style="width:100%; margin-top:0.5rem;">Verify & Unlock</button>
         </div>
-        <p class="tiny-note">No other details needed. We only check your transaction.</p>
+        <p class="tiny-note">For Flutterwave, enter the transaction ID received after mobile money payment.</p>
         <div class="back-link" onclick="goBackToInstructions()">← Change payment method</div>
       </div>
     </div>
   </div>
 
   <script>
-    // Global state
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+      const clockEl = document.getElementById('clockDisplay');
+      if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+    setInterval(updateClock, 10);
+    updateClock();
+
+    const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-xxxxxxxxxxxxxxxxxxxxx';  // your live public key
+    const BASE_URL = 'https://cinemafric.vercel.app';               // your Vercel domain
+
+    const movies = {
+      movie1: { title: 'Chikamoneka', price: 20 },
+      movie2: { title: 'Echoes of the Savanna', price: 15 },
+      movie3: { title: 'Copper Sunrise', price: 10 },
+      movie4: { title: 'The Last Harvest', price: 10 }
+    };
+
+    let currentMovieId = 'movie1';
     let selectedNetwork = null;
+
     const merchantNumbers = {
       mtn: '0971234567',
       airtel: '0977654321',
       zamtel: '0955555555'
     };
 
+    // Welcome animation
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('welcome-overlay').classList.add('fade-out'), 2600);
+      setTimeout(() => {
+        const overlay = document.getElementById('welcome-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }, 3200);
+    });
+
+    // Visitor counter
+    (async function updateCounter() {
+      try {
+        const res = await fetch('https://api.countapi.xyz/hit/cinemafric/mainpage');
+        const data = await res.json();
+        document.getElementById('visitorCount').textContent = data.value;
+      } catch (e) {
+        document.getElementById('visitorCount').textContent = '---';
+      }
+    })();
+
     window.addEventListener('scroll', () => {
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
+    // Trailer
     function openTrailer() { document.getElementById('trailerModal').classList.add('open'); }
     function closeTrailer() { document.getElementById('trailerModal').classList.remove('open'); }
 
+    // Share
     function sharePage() {
       if (navigator.share) {
         navigator.share({ title: document.title, url: window.location.href }).catch(() => {});
       } else {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-          alert('Link copied! Paste it into WhatsApp or Facebook to share.');
-        }).catch(() => {
-          prompt('Copy this link to share:', window.location.href);
-        });
+        navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'));
       }
     }
-
     function shareOnWhatsApp() {
-      const text = encodeURIComponent('🎬 Watch "The Future Won\'t Wait" on CinemAfric! ' + window.location.href);
+      const text = encodeURIComponent('🎬 Watch ' + movies[currentMovieId].title + ' on CinemAfric! ' + window.location.href);
       window.open(`https://wa.me/?text=${text}`, '_blank');
     }
 
-    function openPaymentModal() {
+    // Payment modal
+    function openPaymentModal(movieId) {
+      currentMovieId = movieId;
+      const movie = movies[movieId];
+      document.getElementById('modalMovieTitle').innerText = 'Unlock: ' + movie.title;
+      document.getElementById('modalMoviePrice').innerText = 'Price: K' + movie.price;
       document.getElementById('paymentModal').classList.add('open');
       resetPaymentModal();
     }
@@ -596,13 +640,45 @@
       document.getElementById('verificationStep').classList.add('hidden');
       document.getElementById('merchantNumber').innerText = merchantNumbers[network];
       document.getElementById('networkName').innerText = network.toUpperCase();
+      document.getElementById('instructionAmount').innerText = 'K' + movies[currentMovieId].price;
+    }
+
+    document.getElementById('flutterwaveBtn').addEventListener('click', function () {
+      const movie = movies[currentMovieId];
+      closePaymentModal();
+      FlutterwaveCheckout({
+        public_key: FLUTTERWAVE_PUBLIC_KEY,
+        tx_ref: 'cinemafric_' + Date.now(),
+        amount: movie.price,
+        currency: 'ZMW',
+        payment_options: 'mobilemoney, ussd',
+        customer: { email: 'viewer@cinemafric.com', name: 'Movie Fan' },
+        callback: function (data) {
+          if (data.status === 'successful') verifyFlutterwavePayment(data.transaction_id);
+          else alert('Payment was not successful. Please try again.');
+        },
+        onclose: function () {},
+        customizations: { title: 'CinemAfric', description: movie.title }
+      });
+    });
+
+    async function verifyFlutterwavePayment(transactionId) {
+      try {
+        const res = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transactionId, amount: movies[currentMovieId].price, network: 'flutterwave', movieId: currentMovieId })
+        });
+        const data = await res.json();
+        if (data.success) unlockMovie(data.videoUrl, movies[currentMovieId].title);
+        else alert('Verification failed: ' + data.message);
+      } catch (err) { alert('Network error. Please try again.'); }
     }
 
     function showVerification() {
       document.getElementById('instructionStep').classList.add('hidden');
       document.getElementById('verificationStep').classList.remove('hidden');
     }
-
     function goBackToProviders() { resetPaymentModal(); }
     function goBackToInstructions() {
       if (selectedNetwork) {
@@ -615,24 +691,30 @@
       const txnInput = document.getElementById('txnIdInput');
       const txnId = txnInput.value.trim();
       if (!txnId) return alert('Please enter the transaction ID.');
+      const movie = movies[currentMovieId];
+      const network = selectedNetwork || 'flutterwave';
       try {
         const res = await fetch('/api/verify-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transactionId: txnId, amount: 20, network: selectedNetwork })
+          body: JSON.stringify({ transactionId: txnId, amount: movie.price, network, movieId: currentMovieId })
         });
         const data = await res.json();
-        if (data.success) unlockMovie(data.videoUrl);
-        else alert('Verification failed: ' + data.message);
+        if (data.success) {
+          unlockMovie(data.videoUrl, movie.title);
+          if (typeof gtag === 'function') {
+            gtag('event', 'purchase', { transaction_id: txnId, value: movie.price, currency: 'ZMW', movie_id: currentMovieId, movie_title: movie.title, network });
+          }
+        } else alert('Verification failed: ' + data.message);
       } catch (err) { alert('Network error. Please try again.'); }
     }
 
-    function unlockMovie(videoUrl) {
+    function unlockMovie(videoUrl, title) {
       closePaymentModal();
       const section = document.getElementById('privateVideoSection');
+      document.getElementById('unlockTitle').innerText = '🎥 Now Showing – ' + title;
       section.style.display = 'block';
-      document.getElementById('videoContainer').innerHTML =
-        `<iframe src="${videoUrl}" frameborder="0" allowfullscreen style="width:100%; height:60vh; border-radius:8px;"></iframe>`;
+      document.getElementById('videoContainer').innerHTML = `<iframe src="${videoUrl}" frameborder="0" allowfullscreen style="width:100%; height:60vh; border-radius:8px;"></iframe>`;
       section.scrollIntoView({ behavior: 'smooth' });
     }
 
